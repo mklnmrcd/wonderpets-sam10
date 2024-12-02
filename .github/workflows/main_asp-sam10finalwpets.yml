@@ -63,4 +63,4 @@ jobs:
           app-name: 'ASP-sam10FinalWPets'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_83EF1B8DECD5478887939BD359E1AE3D }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_0732F93336B941BB95E5D033F42613FA }}
