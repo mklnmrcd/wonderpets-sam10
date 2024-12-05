@@ -16,24 +16,43 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Setup PHP environment
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
 
+      # Check if composer.json exists
       - name: Check if composer.json exists
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
           files: 'composer.json'
 
+      # Run composer install if composer.json exists
       - name: Run composer install if composer.json exists
         if: steps.check_files.outputs.files_exists == 'true'
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
 
+      # Setup Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      # Install Node.js dependencies
+      - name: Install Node.js dependencies
+        run: npm install
+
+      # Build the Vite app
+      - name: Build the Vite app
+        run: npm run build
+
+      # Zip artifact for deployment
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
 
+      # Upload artifact for deployment job
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -46,7 +65,7 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -55,7 +74,7 @@ jobs:
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
-      
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
